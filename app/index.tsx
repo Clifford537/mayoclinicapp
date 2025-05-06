@@ -4,18 +4,22 @@ import { useState } from 'react';
 import {
   Alert,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 
 export default function Home() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
 
   // Hardcoded credentials
@@ -28,17 +32,15 @@ export default function Home() {
       return;
     }
 
-    // Check if the email and password match the hardcoded credentials
     if (email === validEmail && password === validPassword) {
       Alert.alert('Login successful', `Welcome, ${email}`);
-      router.push('/Homepage'); // Navigate to the Homepage
+      router.push('/Homepage');
     } else {
       Alert.alert('Login failed', 'Invalid email or password');
     }
   };
 
   const handleGoogleLogin = () => {
-    // Placeholder for Google login logic
     Alert.alert('Google Login', 'Redirecting to Google login...');
   };
 
@@ -47,54 +49,68 @@ export default function Home() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image
-          source={{
-            uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdpMLJmZR8r2omq_jCc9Hhp8nc-iyKbUAKMA&s',
-          }}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          <Image
+            source={{
+              uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdpMLJmZR8r2omq_jCc9Hhp8nc-iyKbUAKMA&s',
+            }}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        <Text style={styles.title}>Mayo Clinic Login</Text>
+          <Text style={styles.title}>Mayo Clinic Login</Text>
 
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          style={styles.input}
-          placeholderTextColor="#888"
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-          placeholderTextColor="#888"
-        />
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            style={styles.input}
+            placeholderTextColor="#888"
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+          {/* Password with visibility toggle */}
+          <View style={styles.passwordContainer}>
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!passwordVisible}
+              style={styles.passwordInput}
+              placeholderTextColor="#888"
+            />
+            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+              <AntDesign
+                name={passwordVisible ? 'eye' : 'eyeo'}
+                size={20}
+                color="#888"
+                style={{ paddingHorizontal: 8 }}
+              />
+            </TouchableOpacity>
+          </View>
 
-        <Text style={styles.orText}>OR</Text>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-          <AntDesign name="google" size={20} color="#DB4437" style={{ marginRight: 8 }} />
-          <Text style={styles.googleText}>Continue with Google</Text>
-        </TouchableOpacity>
+          <Text style={styles.orText}>OR</Text>
 
-        <TouchableOpacity style={styles.linkButton} onPress={navigateToRegister}>
-          <Text style={styles.linkText}>Don’t have an account? Register</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+            <AntDesign name="google" size={20} color="#DB4437" style={{ marginRight: 8 }} />
+            <Text style={styles.googleText}>Continue with Google</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.linkButton} onPress={navigateToRegister}>
+            <Text style={styles.linkText}>Don’t have an account? Register</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -129,6 +145,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
     marginBottom: 15,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
   },
   button: {
     backgroundColor: PRIMARY_COLOR,
