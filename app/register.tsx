@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -20,6 +20,7 @@ export default function Register() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
+      
       <TextInput
         placeholder="Full Name"
         value={name}
@@ -54,7 +55,15 @@ export default function Register() {
         secureTextEntry
         style={styles.input}
       />
-      <Button title="Register" onPress={handleRegister} />
+      
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
+
+      {/* Optional: Add a "Go back to Login" link */}
+      <TouchableOpacity style={styles.linkButton} onPress={() => {}}>
+        <Text style={styles.linkText}>Already have an account? Login</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -63,18 +72,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5', // Light background color
     padding: 20,
   },
-  input: {
-    borderWidth: 1,
-    marginVertical: 10,
-    padding: 10,
-    borderRadius: 5,
-    width: '100%',
-  },
   title: {
-    fontSize: 24,
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#005DAA', // Mayo Clinic color
     marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    fontSize: 16,
+    marginBottom: 15,
+    elevation: 2, // Add shadow for a subtle elevation effect
+  },
+  button: {
+    width: '100%',
+    backgroundColor: '#005DAA',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  linkButton: {
+    marginTop: 10,
+  },
+  linkText: {
+    color: '#005DAA',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

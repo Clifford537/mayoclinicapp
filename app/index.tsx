@@ -1,61 +1,176 @@
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { useState } from 'react';
+import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 
 export default function Home() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  // Hardcoded credentials
+  const validEmail = 'useremail@gmail.com';
+  const validPassword = 'password!';
+
   const handleLogin = () => {
-    // Handle login logic here (for now, just alert)
-    console.log('Email:', email, 'Password:', password);
+    if (!email || !password) {
+      Alert.alert('Missing fields', 'Please enter both email and password');
+      return;
+    }
+
+    // Check if the email and password match the hardcoded credentials
+    if (email === validEmail && password === validPassword) {
+      Alert.alert('Login successful', `Welcome, ${email}`);
+      router.push('/Homepage'); // Navigate to the Homepage
+    } else {
+      Alert.alert('Login failed', 'Invalid email or password');
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    // Placeholder for Google login logic
+    Alert.alert('Google Login', 'Redirecting to Google login...');
   };
 
   const navigateToRegister = () => {
-    router.push('/register');  // Navigate to register screen
+    router.push('/register');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Don't have an account? Register" onPress={navigateToRegister} />
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image
+          source={{
+            uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdpMLJmZR8r2omq_jCc9Hhp8nc-iyKbUAKMA&s',
+          }}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+        <Text style={styles.title}>Mayo Clinic Login</Text>
+
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          style={styles.input}
+          placeholderTextColor="#888"
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+          placeholderTextColor="#888"
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.orText}>OR</Text>
+
+        <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+          <AntDesign name="google" size={20} color="#DB4437" style={{ marginRight: 8 }} />
+          <Text style={styles.googleText}>Continue with Google</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.linkButton} onPress={navigateToRegister}>
+          <Text style={styles.linkText}>Don’t have an account? Register</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
+const PRIMARY_COLOR = '#005DAA';
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    backgroundColor: '#f7fafd',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  input: {
-    borderWidth: 1,
-    marginVertical: 10,
-    padding: 10,
-    borderRadius: 5,
-    width: '100%',
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    borderRadius: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: PRIMARY_COLOR,
     marginBottom: 20,
+  },
+  input: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 12,
+    borderRadius: 8,
+    fontSize: 16,
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: PRIMARY_COLOR,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+    width: 180,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  orText: {
+    marginVertical: 15,
+    fontSize: 16,
+    color: '#666',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#DB4437',
+    borderWidth: 1.2,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    width: 220,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  googleText: {
+    color: '#DB4437',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  linkButton: {
+    marginTop: 15,
+  },
+  linkText: {
+    color: PRIMARY_COLOR,
+    fontSize: 16,
   },
 });
