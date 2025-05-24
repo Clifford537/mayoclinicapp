@@ -1,81 +1,145 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Linking,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function HomePage() {
-  const [message, setMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('Notes');
 
-  const showTempMessage = (msg: string) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(''), 2000); // clear after 2 seconds
+  const contentMap: Record<string, React.ReactNode> = {
+    Notes: (
+      <FlatList
+        data={[
+          { id: '1', title: 'Follow-up with Dr. Smith' },
+          { id: '2', title: 'Blood pressure log - Week 3' },
+          { id: '3', title: 'Questions for next visit' },
+        ]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemCard}>
+            <Text style={styles.itemText}>{item.title}</Text>
+          </View>
+        )}
+      />
+    ),
+    Visits: (
+      <FlatList
+        data={[
+          { id: '1', title: 'Cardiology - Jan 10, 2025' },
+          { id: '2', title: 'Dermatology - Feb 21, 2025' },
+        ]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemCard}>
+            <Text style={styles.itemText}>{item.title}</Text>
+          </View>
+        )}
+      />
+    ),
+    Reminder: (
+      <FlatList
+        data={[
+          { id: '1', title: 'Take medication at 9:00 AM' },
+          { id: '2', title: 'Stretch every 2 hours' },
+        ]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemCard}>
+            <Text style={styles.itemText}>{item.title}</Text>
+          </View>
+        )}
+      />
+    ),
+    Schedule: (
+      <View style={styles.itemCard}>
+        <Text style={styles.itemText}>📅 Calendar Placeholder</Text>
+        <Text style={styles.subText}>Upcoming: Physical Therapy - May 15</Text>
+      </View>
+    ),
   };
 
-  const handleViewNotes = () => {
-    showTempMessage('Loading notes...');
-    Alert.alert('View Notes', 'You clicked the View Notes button');
+  const handleTabPress = (tab: string) => {
+    setActiveTab(tab);
   };
 
-  const handleViewVisits = () => {
-    showTempMessage('Fetching visit history...');
-    Alert.alert('View Visits', 'You clicked the View Visits button');
-  };
+  const handleLogout = () => Alert.alert('Logout', 'You have been logged out.');
 
-  const handleScheduledVisits = () => {
-    showTempMessage('Checking scheduled visits...');
-    Alert.alert('Scheduled Visits', 'You clicked the Scheduled Visits button');
-  };
-
-  const handleNotesAndVisits = () => {
-    showTempMessage('Loading notes & visits...');
-    Alert.alert('Notes & Visits', 'You clicked the Notes & Visits button');
-  };
-
-  const handleSchedule = () => {
-    showTempMessage('Opening scheduler...');
-    Alert.alert('Schedule', 'You clicked the Schedule button');
+  const handlePairing = async () => {
+    try {
+      const bluetoothUrl =
+        Platform.OS === 'ios'
+          ? 'App-Prefs:Bluetooth'
+          : 'android.settings.BLUETOOTH_SETTINGS';
+      const supported = await Linking.canOpenURL(bluetoothUrl);
+      if (supported) {
+        await Linking.openURL(bluetoothUrl);
+      } else {
+        await Linking.openSettings();
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Unable to open Bluetooth settings.');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome to Mayo Clinic</Text>
-
-      <View style={styles.body}>
-        <MaterialCommunityIcons
-          name="bluetooth-connect"
-          size={40}
-          color="#005DAA"
-          style={{ marginBottom: 10 }}
-        />
-        <Text style={styles.bodyText}>Your personalized Mayo Clinic App</Text>
-        {message !== '' && <Text style={styles.messageText}>{message}</Text>}
+      {/* Header */}
+      <View style={styles.headerBar}>
+        <Text style={styles.userInfo}>Hello, John Doe</Text>
+        <View style={styles.topButtons}>
+          <TouchableOpacity onPress={handlePairing} style={styles.iconButton}>
+            <MaterialIcons name="bluetooth-connected" size={22} color="#005DAA" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
+            <AntDesign name="logout" size={22} color="#005DAA" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Buttons in a row */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleViewNotes}>
-          <AntDesign name="filetext1" size={24} color="#fff" />
-          <Text style={styles.buttonText}>View Notes</Text>
-        </TouchableOpacity>
+      {/* Main Content */}
+      <View style={styles.contentArea}>
+        {contentMap[activeTab]}
+      </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleViewVisits}>
-          <AntDesign name="eye" size={24} color="#fff" />
-          <Text style={styles.buttonText}>View Visits</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handleScheduledVisits}>
-          <AntDesign name="calendar" size={24} color="#fff" />
-          <Text style={styles.buttonText}>Scheduled Visits</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handleNotesAndVisits}>
-          <AntDesign name="filetext1" size={24} color="#fff" />
-          <Text style={styles.buttonText}>Notes & Visits</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handleSchedule}>
-          <AntDesign name="calendar" size={24} color="#fff" />
-          <Text style={styles.buttonText}>Schedule</Text>
-        </TouchableOpacity>
+      {/* Footer */}
+      <View style={styles.footer}>
+        {['Notes', 'Visits', 'Schedule', 'Reminder'].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={styles.footerButton}
+            onPress={() => handleTabPress(tab)}
+          >
+            <AntDesign
+              name={
+                tab === 'Notes'
+                  ? 'filetext1'
+                  : tab === 'Visits'
+                  ? 'eye'
+                  : tab === 'Schedule'
+                  ? 'calendar'
+                  : 'bells'
+              }
+              size={22}
+              color={activeTab === tab ? '#003f7f' : '#005DAA'}
+            />
+            <Text
+              style={[
+                styles.footerText,
+                activeTab === tab && { fontWeight: 'bold' },
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
@@ -84,56 +148,64 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    paddingHorizontal: 20,
     backgroundColor: '#f5f5f5',
+    paddingTop: 40,
   },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#005DAA',
-    textAlign: 'center',
-    marginVertical: 30,
-  },
-  body: {
-    flex: 1,
-    justifyContent: 'center',
+  headerBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 10,
   },
-  bodyText: {
+  userInfo: {
     fontSize: 18,
-    color: '#333',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
-  messageText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#005DAA',
-    fontStyle: 'italic',
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    flexWrap: 'wrap',
-    width: '100%',
-    paddingBottom: 30,
-  },
-  button: {
-    backgroundColor: '#005DAA',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    marginBottom: 20,
-    width: 160,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
     fontWeight: '600',
-    marginLeft: 10,
+    color: '#005DAA',
+  },
+  topButtons: {
+    flexDirection: 'row',
+  },
+  iconButton: {
+    marginLeft: 16,
+  },
+  contentArea: {
+    flex: 1,
+    padding: 16,
+  },
+  itemCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  subText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    backgroundColor: '#fff',
+  },
+  footerButton: {
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 12,
+    color: '#005DAA',
+    marginTop: 4,
   },
 });

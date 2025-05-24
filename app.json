@@ -43,15 +43,12 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "572a47b9-6944-468c-8f77-f02faf2edd44"
+        "projectId": "11a8de2c-ec91-4364-a52b-e1a9281dbbda"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "owner": "cliffordmukosh",
-    "updates": {
-      "url": "https://u.expo.dev/572a47b9-6944-468c-8f77-f02faf2edd44"
-    }
+    "owner": "cliffordmukosh"
   }
 }
