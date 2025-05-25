@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "mayoClinic",
-    "slug": "mayoClinic",
-    "version": "1.0.0",
+    "name": "MayoClinic",
+    "slug": "MayoClinic",
+    "version": "2.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mayoclinic",
@@ -45,7 +45,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "11a8de2c-ec91-4364-a52b-e1a9281dbbda"
+        "projectId": "9fa7f245-8d33-4be0-901f-7325c91e7c39"
       }
     },
     "runtimeVersion": {
