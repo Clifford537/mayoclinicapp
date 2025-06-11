@@ -9,13 +9,13 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const { width } = Dimensions.get('window');
 
@@ -38,10 +38,7 @@ export default function LoginScreen() {
         id: number;
         email: string;
         password: string;
-      }>(
-        `SELECT id, email, password FROM patients WHERE email = ?`,
-        [email]
-      );
+      }>(`SELECT id, email, password FROM patients WHERE email = ?`, [email]);
 
       if (!result || result.password !== password) {
         Alert.alert('Login Failed', 'Invalid email or password.');
@@ -58,16 +55,23 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.wrapper}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+        enableOnAndroid
+        extraScrollHeight={80}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Mayo Clinic Logo */}
         <Image
-          source={{ uri: 'https://1000logos.net/wp-content/uploads/2020/11/Mayo-Clinic-logo.png' }}
+          source={{
+            uri: 'https://1000logos.net/wp-content/uploads/2020/11/Mayo-Clinic-logo.png',
+          }}
           style={styles.logo}
           resizeMode="contain"
-          accessible={true}
+          accessible
           accessibilityLabel="Mayo Clinic logo"
         />
 
@@ -117,9 +121,10 @@ export default function LoginScreen() {
           style={styles.registerLink}
           onPress={() => router.push('/(auth)/register')}
         >
-          Don't have an account? <Text style={styles.linkText}>Register</Text>
+          Don't have an account?{' '}
+          <Text style={styles.linkText}>Register</Text>
         </Text>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -136,8 +141,8 @@ const styles = StyleSheet.create({
     paddingVertical: 48,
   },
   logo: {
-    width: width * 0.6, // 60% of screen width
-    height: (width * 0.6) / 3, // Adjust height based on aspect ratio ~ 3:1
+    width: width * 0.6,
+    height: (width * 0.6) / 3,
     alignSelf: 'center',
     marginBottom: 24,
   },

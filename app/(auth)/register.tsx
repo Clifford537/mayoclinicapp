@@ -6,13 +6,13 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function RegisterScreen() {
   const db = useSQLiteContext();
@@ -24,6 +24,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onRegister = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
@@ -66,7 +67,12 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.wrapper}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid
+        extraScrollHeight={80}
+      >
         <Text style={styles.title}>Create Account</Text>
 
         <View style={styles.inputGroup}>
@@ -117,7 +123,7 @@ export default function RegisterScreen() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
-              textContentType="password"
+              textContentType="newPassword"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <FontAwesome
@@ -138,12 +144,12 @@ export default function RegisterScreen() {
               placeholderTextColor="#666"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
-              secureTextEntry={!showPassword}
+              secureTextEntry={!showConfirmPassword}
               textContentType="password"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
               <FontAwesome
-                name={showPassword ? 'eye-slash' : 'eye'}
+                name={showConfirmPassword ? 'eye-slash' : 'eye'}
                 size={20}
                 color="#444"
               />
@@ -158,7 +164,7 @@ export default function RegisterScreen() {
         <Text style={styles.loginLink} onPress={() => router.push('/(auth)/login')}>
           Already have an account? <Text style={styles.linkText}>Login</Text>
         </Text>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );
 }
